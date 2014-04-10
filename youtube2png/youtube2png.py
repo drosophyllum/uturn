@@ -1,5 +1,6 @@
 #!/usr/bin/python2
 
+import simplejson as json
 import subprocess
 import sys
 import os
@@ -99,7 +100,6 @@ if not os.path.isfile('peaks/%s.txt'%videoid):
          ]
     try:
         juliaout = subprocess.check_output(args)
-        heights = eval(juliaout)
     except Exception as e:
         error('wave.jl failed!', e)
     try:
@@ -107,3 +107,16 @@ if not os.path.isfile('peaks/%s.txt'%videoid):
             peakfile.write(juliaout)
     except Exception as e:
         error('writing peaks file failed!', e)
+
+else:
+    with open('peaks/%s.txt'%videoid,'r') as peakfile:
+        contents = peakfile.read()
+    peaks = eval(contents)
+    numpeaks = len(peaks)
+    debug("%s peaks"%str(len(peaks)))
+    with open('info/%s.json'%videoid,'r') as jsonfile:
+        data = json.load(jsonfile)
+    duration = data['duration']
+    debug('%s seconds'%duration)
+    peakspersecond = 1.0*numpeaks/duration
+    debug('%s peaks per second'%peakspersecond)
