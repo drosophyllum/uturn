@@ -1,11 +1,12 @@
 module wave
 using Images
+using JSON
 
-function wave2array(path)
-    img = imread(path);
-    wave =  int(sum(sum(img,1),3)[:])
-    wave = wave/maximum(wave)
-    return (1-wave)
-end
+img = imread(ARGS[1]);
+w =  int(sum(sum(img,1),3)[:])
+w = w/maximum(w)
+w = (1.-w)
+
+print(json(w))
 
 end
