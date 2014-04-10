@@ -1,6 +1,18 @@
 .menu {
 display:inline;
+    background-color:black;
+   top:0px;
+   left:0px;
+   position:absolute;
+   width:100%;
+   height:100px;
 }
 .menu a {
-    color:red;
+    color:white;
+    font-size:35px;
+    margin-left:50px;
+    text-decoration:none;
+    background-color:black;
+    font-family: 'Oswald', sans-serif;
+
 }
