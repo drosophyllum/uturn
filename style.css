@@ -1,3 +1,6 @@
+.menu {
+display:inline;
+}
 .menu a {
     color:red;
 }
