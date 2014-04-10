@@ -8,22 +8,20 @@
 <title>uTurn</title>
 </head>
 <body>
-<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-<script type='text/javascript'>
-function menu(item){
-    alert(item+" was pressed!");
-}
-</script>
-
-<div id= "menu" class="menu">
-<img src="logo.png" width=110 height=80 alt="Logo for uTurn"/>
-<a href="javascript:menu(1);">link 1</a>
-<a href="javascript:menu(2);">link 2</a>
-<a href="javascript:menu(3);">link 3</a>
-<a href="javascript:menu(4);">link 4</a>
+<script src="jquery/jquery-1.11.0.js"></script>
+<script src="main.js"></script>
+<div id="menu">
+    <img src="images/logo.png" width=110 height=80 alt="Logo for uTurn"/>
+    <a href="javascript:menu('search');">search</a>
+    <a href="javascript:menu(2);">link 2</a>
+    <a href="javascript:menu(3);">link 3</a>
+    <a href="javascript:menu(4);">link 4</a>
 </div>
-<hr/>
+<div id="page">
+    <div id="search">
+        <input type="text" name="searchfield"/>
+    </div>
+</div>
 
 </body>
 </html>
