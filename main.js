@@ -35,6 +35,9 @@ function menuAmplify(){
 $(document).ready(ready());
 var peaks;
 function getJson(){
+    heights=new Array();
+
+    moveheights=new Array();
     var oRequest =new XMLHttpRequest();
     var sURL = '../youtube2png/peaks/DUT5rEU6pqM.txt';
     oRequest.open("GET",sURL,false);
@@ -42,11 +45,11 @@ function getJson(){
 
     if (oRequest.status==200) {
         peaks=oRequest.responseText;
-        heights=eval(peaks);
-        for(x=0;x<heights.length-2;x+=3){
-            heights[x/3]=(heights[x]+heights[x+1]+heights[x+2])/3*200
+        heights[0]=eval(peaks);
+        for(x=0;x<heights[0].length-2;x+=3){
+            heights[0][x/3]=(heights[0][x]+heights[0][x+1]+heights[0][x+2])/3*200
         }
-        moveheights=heights.slice(0);
+        moveheights[0]=heights[0].slice(0);
     }
     else {
         alert("Error executing XMLHttpRequest call!");
@@ -67,12 +70,14 @@ function OnMouseDown(e){
     if(target.className.indexOf('canvas')!==-1){
         dragStartX = e.clientX-loffset;
         dragStartY = e.clientY-100;
-        document.onmousemove=OnMouseMove;
-        document.body.focus();
-        document.onselectstart=function(){return false;};
-        target.ondragstart = function(){return false;};
-        dragtarget=target;
-        return false;
+        if(dragStartY < heights[0][dragStartX]){
+            document.onmousemove=OnMouseMove;
+            document.body.focus();
+            document.onselectstart=function(){return false;};
+            target.ondragstart = function(){return false;};
+            dragtarget=target;
+            return false;
+        }
     }
 }
 function drawContext(){
@@ -83,7 +88,7 @@ function drawContext(){
         context.strokeStyle='#000000'
         context.beginPath();
         context.moveTo(x,0);
-        context.lineTo(x,heights[x]);
+        context.lineTo(x,heights[0][x]);
         context.closePath();
         context.stroke();
     }
@@ -119,11 +124,11 @@ function OnMouseUp(e){
         if(amplify == true){
 
             for(x=selectStart;x<=selectStop;x+=1){
-                heights[x]= heights[x]+dragStopY-dragStartY;
+                heights[0][x]= heights[0][x]+dragStopY-dragStartY;
             }
-            drawSelect(selectStart,selectStop, 0, heights);
+            drawSelect(selectStart,selectStop, 0, heights[0]);
             alert("amplified");
-            moveheights=heights.slice(0);
+            moveheights[0]=heights[0].slice(0);
             amplify=false;
             debug(move);
         }
@@ -132,7 +137,7 @@ function OnMouseUp(e){
             adx=Math.abs(dx);
             drawContext();
             alert()
-            heights=moveheights.slice(0);
+            heights[0]=moveheights[0].slice(0);
             move=false;
         }
         drawContext();
@@ -154,28 +159,28 @@ function OnMouseMove(e){
     dx = endx-startx;
 
     if(amplify == true){
-        drawSelect(selectStart,selectStop, currentY-dragStartY, heights);
+        drawSelect(selectStart,selectStop, currentY-dragStartY, heights[0]);
     }
     if(move==true){
-        moveheights=heights.slice(0);
+        moveheights[0]=heights[0].slice(0);
         dx=currentX-dragStartX;
         adx=Math.abs(dx);
         if (dx< 0){
             for(x=800;x>=currentX;x-=1){
-                moveheights[x]= heights[x-currentX+dragStartX];
+                moveheights[0][x]= heights[0][x-currentX+dragStartX];
             }
-            drawSelect(currentX,800, 0, moveheights);
+            drawSelect(currentX,800, 0, moveheights[0]);
         }
         if (dx > 0){
             for(x=0;x<=currentX;x+=1){
-                moveheights[x]= heights[x-currentX+dragStartX];
+                moveheights[0][x]= heights[0][x-currentX+dragStartX];
             }
-            drawSelect(0,currentX, 0, moveheights);
+            drawSelect(0,currentX, 0, moveheights[0]);
         }
     }
 
     if(move==false && amplify==false){ //selection
-        drawSelect(startx,endx,0,heights);
+        drawSelect(startx,endx,0,heights[0]);
     }
 }
 function ready(){
