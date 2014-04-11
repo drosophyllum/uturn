@@ -34,12 +34,12 @@ function menuAmplify(){
 }
 $(document).ready(ready());
 var peaks;
-function getJson(){
+function getJson(id){
     heights=new Array();
 
     moveheights=new Array();
     var oRequest =new XMLHttpRequest();
-    var sURL = '../youtube2png/peaks/DUT5rEU6pqM.txt';
+    var sURL = '../youtube2png/peaks/'+id+'.txt';
     oRequest.open("GET",sURL,false);
     oRequest.send(null)
 
@@ -186,6 +186,6 @@ function OnMouseMove(e){
 function ready(){
     document.onmousedown=OnMouseDown;
     document.onmouseup=OnMouseUp;
-    getJson();
+    getJson('DUT5rEU6pqM');
     drawContext();
 }
