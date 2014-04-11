@@ -6,7 +6,7 @@ import sys
 import os
 print "Running!"
 
-
+os.chdir('youtube2png')
 def debug(string):
     print string
 

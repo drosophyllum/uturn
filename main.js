@@ -31,6 +31,56 @@ function menuAmplify(){
 }
 $(document).ready(ready());
 var peaks;
+
+///////////////////////
+
+function xml_http_post(url, data, callback) {
+    var req = false;
+    try {
+        // Firefox, Opera 8.0+, Safari
+        req = new XMLHttpRequest();
+    }
+    catch (e) {
+        // Internet Explorer
+        try {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        catch (e) {
+            try {
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            catch (e) {
+                alert("Your browser does not support AJAX!");
+                return false;
+            }
+        }
+    }
+    req.open("POST", url, true);
+    req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+            callback(req);
+        }
+    }
+    req.send(data);
+}
+
+
+
+function test_handle(req) {
+    debug(req.responseText);
+    num=heights.length
+    durations[num]=getDuration(req.responseText);
+    heights[num]=getJson(req.responseText);
+    moveheights=heights.slice(0);
+    colors[num]='#'+Math.floor(Math.random()*16777215).toString(16);
+    document.getElementById("searchbox").value = '';
+    $("#search").toggle();
+    drawContext(heights);
+}
+
+
+/////////////////////
+
 function getDuration(id){
     var oRequest =new XMLHttpRequest();
     var sURL = '../youtube2png/duration/'+id+'.txt';
@@ -41,6 +91,14 @@ function getDuration(id){
         duration=eval(peaks);
         return duration
     }
+}
+function searched(e){
+    if(e.which==13||e.keyCode==13){
+        var contents = document.getElementById("searchbox").value;
+        xml_http_post("index.html", contents, test_handle)
+    }
+    document.getElementById("searchbox").value = 'getting song...';
+
 }
 function getJson(id){
     var oRequest =new XMLHttpRequest();
@@ -234,15 +292,9 @@ function ready(){
     amplify=false;
     move=false;
     durations = new Array();
-    colors[0] = '#000000';
-    colors[1] = '#FF0000';
-    colors[2] = '#00FF00';
-    durations[0]=getDuration('DUT5rEU6pqM');
-    durations[1]=getDuration('4W8EwuMOi8I');
-    durations[2]=getDuration('obV-OL3TwXo');
-    heights[0]=getJson('DUT5rEU6pqM');
-    heights[1]=getJson('4W8EwuMOi8I');
-    heights[2]=getJson('obV-OL3TwXo');
+    debug('DUT5rEU6pqM');
+    debug('4W8EwuMOi8I');
+    debug('obV-OL3TwXo');
     moveheights=heights.slice(0);
     drawContext(heights);
 }
