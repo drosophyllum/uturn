@@ -31,20 +31,32 @@ function menuAmplify(){
 }
 $(document).ready(ready());
 var peaks;
-function getJson(id){
-    h=new Array();
+function getDuration(id){
     var oRequest =new XMLHttpRequest();
-    var sURL = '../youtube2png/peaks/'+id+'.txt';
+    var sURL = '../youtube2png/duration/'+id+'.txt';
     oRequest.open("GET",sURL,false);
     oRequest.send(null)
-
+    if (oRequest.status==200) {
+        peaks=oRequest.responseText;
+        duration=eval(peaks);
+        return duration
+    }
+}
+function getJson(id){
+    var oRequest =new XMLHttpRequest();
+    var sURL = '../youtube2png/peaks/'+id+'.txt';
+    var numSongs = heights.length;
+    var duration = durations[numSongs]
+    oRequest.open("GET",sURL,false);
+    oRequest.send(null)
+    h=new Array();
     if (oRequest.status==200) {
         peaks=oRequest.responseText;
         peaks=eval(peaks);
         for(x=0;x<peaks.length-2;x+=3){
             h[x/3]=(peaks[x]+peaks[x+1]+peaks[x+2])/3*200
         }
-        return h;
+        return h
     }
     else {
         alert("Error executing XMLHttpRequest call!");
@@ -54,7 +66,7 @@ function getJson(id){
 amplify=false;
 move=false;
 function debug(string){
-    document.getElementById('debug').innerHTML=string;}
+    document.getElementById('debug').innerHTML+=string+"<br>";}
 dragtarget=null;
 
 function getHeight(myheights, songnum, x){
@@ -64,7 +76,7 @@ function getHeight(myheights, songnum, x){
     }
     for(var song =0; song<=songnum; song+=1){
         if(isNaN(myheights[song][x]) == false)
-        h+= myheights[song][x]
+            h+= myheights[song][x]
     }
     return h
 }
@@ -76,8 +88,7 @@ function OnMouseDown(e){
     if(target.className.indexOf('canvas')!==-1){
         dragStartX = e.clientX-loffset;
         dragStartY = e.clientY-100;
-        numsongs=heights.length;
-        for(var song =0; song<numsongs; song+=1){
+        for(var song =0; song<heights.length; song+=1){
             if(dragStartY < getHeight(heights,song, dragStartX) || amplify == true){
                 if (amplify == false){
                     selectSong=song;
@@ -220,11 +231,16 @@ function ready(){
     document.onmousedown=OnMouseDown;
     document.onmouseup=OnMouseUp;
     colors = new Array();
+    amplify=false;
+    move=false;
+    durations = new Array();
     colors[0] = '#000000';
     colors[1] = '#FF0000';
     colors[2] = '#00FF00';
+    durations[0]=getDuration('DUT5rEU6pqM');
+    durations[1]=getDuration('4W8EwuMOi8I');
+    durations[2]=getDuration('obV-OL3TwXo');
     heights[0]=getJson('DUT5rEU6pqM');
-    //heights[1]=getJson('DUT5rEU6pqM');
     heights[1]=getJson('4W8EwuMOi8I');
     heights[2]=getJson('obV-OL3TwXo');
     moveheights=heights.slice(0);

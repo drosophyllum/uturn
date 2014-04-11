@@ -84,9 +84,22 @@ if not os.path.isfile('wav/%s.wav'%videoid):
     except Exception as e:
         error('ffmpeg failed!', e)
 
+with open('info/%s.json'%videoid,'r') as jsonfile:
+    data = json.load(jsonfile)
+duration = data['duration']
+
+if not os.path.isfile('duration/%s.txt'%videoid):
+    try:
+        with open('duration/%s.txt'%videoid,'w') as durationfile:
+            durationfile.write(str(duration))
+    except Exception as e:
+        error('writing duration file failed!', e)
+
 if not os.path.isfile('png/%s.png'%videoid):
     debug('running wav2png')
     args=['./wav2png',
+          '-w'
+          '%s'%str(int(duration)*6),
           '-o',
           'png/%s.png'%videoid,
           'wav/%s.wav'%videoid
@@ -113,25 +126,7 @@ if not os.path.isfile('peaks/%s.txt'%videoid):
         error('writing peaks file failed!', e)
 
 
-with open('peaks/%s.txt'%videoid,'r') as peakfile:
-    contents = peakfile.read()
-peaks = eval(contents)
-numpeaks = len(peaks)
-debug("%s peaks"%str(len(peaks)))
-with open('info/%s.json'%videoid,'r') as jsonfile:
-    data = json.load(jsonfile)
-duration = data['duration']
-
-if not os.path.isfile('duration/%s.txt'%videoid):
-    try:
-        with open('duration/%s.txt'%videoid,'w') as durationfile:
-            durationfile.write(str(duration))
-    except Exception as e:
-        error('writing duration file failed!', e)
-
 
 
 debug('%s seconds'%duration)
-peakspersecond = 1.0*numpeaks/duration
-debug('%s peaks per second'%peakspersecond)
 
