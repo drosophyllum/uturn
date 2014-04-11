@@ -9,7 +9,6 @@ function menu(item){
     }
     if(item=='move'){
         menuMove();
-        debug(move);
         return;
     }
 
@@ -19,7 +18,6 @@ function menu(item){
 function menuMove(){
     move=true;
     amplify=false;
-    debug(move);
     var selectcanvas = document.getElementById('selectcanvas');
     var selectcontext = selectcanvas.getContext('2d');
     selectcontext.clearRect(0,0,800,600);
@@ -30,7 +28,6 @@ function menuSearch(){
 function menuAmplify(){
     amplify = true;
     move=false;
-    debug(move);
 }
 $(document).ready(ready());
 var peaks;
@@ -58,7 +55,6 @@ amplify=false;
 move=false;
 function debug(string){
     document.getElementById('debug').innerHTML=string;}
-debug(move)
 dragtarget=null;
 
 function getHeight(myheights, songnum, x){
@@ -130,7 +126,6 @@ function drawSelect(song,left,right,h){
 }
 function OnMouseUp(e){
     if(dragtarget!= null){
-        debug(move);
         document.onmousemove=null;
         document.onselectstart=null;
         dragtarget.ondragstart=null;
@@ -150,14 +145,12 @@ function OnMouseUp(e){
         if(amplify == true){
             heights[selectSong] = moveheights[selectSong].slice(0);
             amplify=false;
-            debug(move);
         }
         if(move==true){
             dx=dragStopX-dragStartX;
             adx=Math.abs(dx);
             heights[selectSong]=moveheights[selectSong].slice(0);
             move=false;
-            debug(heights[0][50]);
         }
         drawContext(heights);
     }
@@ -181,7 +174,8 @@ function OnMouseMove(e){
     if(amplify == true){
         moveheights[selectSong]=heights[selectSong].slice(0);
         for(x=selectStart;x<selectStop;x+=1){
-            moveheights[selectSong][x] = heights[selectSong][x] + currentY - dragStartY;
+            moveheights[selectSong][x] = Math.max(0,heights[selectSong][x] + currentY - dragStartY);
+
         }
         drawSelect(selectSong,selectStart,selectStop, moveheights);
         drawContext(moveheights)
@@ -198,7 +192,6 @@ function OnMouseMove(e){
                 else{
                     moveheights[selectSong][x]=Math.max(heights[selectSong][x-currentX+dragStartX],0);
                 }
-                debug(dragStartX-currentX)
             }
 
             drawSelect(selectSong,currentX,800, moveheights);
@@ -229,9 +222,11 @@ function ready(){
     colors = new Array();
     colors[0] = '#000000';
     colors[1] = '#FF0000';
+    colors[2] = '#00FF00';
     heights[0]=getJson('DUT5rEU6pqM');
     //heights[1]=getJson('DUT5rEU6pqM');
     heights[1]=getJson('4W8EwuMOi8I');
+    heights[2]=getJson('obV-OL3TwXo');
     moveheights=heights.slice(0);
     drawContext(heights);
 }
