@@ -113,7 +113,7 @@ function drawContext(h){
         }
     }
 }
-function drawSelect(song,left,right,dy,h){
+function drawSelect(song,left,right,h){
     var selectcanvas = document.getElementById('selectcanvas');
     var selectcontext = selectcanvas.getContext('2d');
     selectcontext.clearRect(0,0,800,600);
@@ -122,7 +122,7 @@ function drawSelect(song,left,right,dy,h){
             selectcontext.strokeStyle='#0000FF';
             selectcontext.beginPath();
             selectcontext.moveTo(x,getHeight(h, song-1, x));
-            selectcontext.lineTo(x,Math.max(getHeight(h, song, x)+dy, getHeight(h,song-1,x)));
+            selectcontext.lineTo(x,Math.max(getHeight(h, song, x), getHeight(h,song-1,x)));
             selectcontext.closePath();
             selectcontext.stroke();
         }
@@ -139,18 +139,16 @@ function OnMouseUp(e){
 
         dragtarget=null;
         if(amplify == false && move==false){
-        selectStart = Math.min(dragStartX,dragStopX);
-        selectStop = Math.max(dragStartX,dragStopX);
+            selectStart = Math.min(dragStartX,dragStopX);
+            selectStop = Math.max(dragStartX,dragStopX);
+        }
+        else{
+            selectStart=0;
+            selectStop=0;
+            drawSelect(0,0,0,heights);
         }
         if(amplify == true){
-
-            for(x=selectStart;x<=selectStop;x+=1){
-                if(heights[selectSong][x] >0){
-                    heights[selectSong][x]= Math.max(heights[selectSong][x]+dragStopY-dragStartY,0);
-                }
-            }
-            drawSelect(selectStart,selectStop, 0, heights[0]);
-            moveheights[selectSong]=heights[selectSong].slice(0);
+            heights[selectSong] = moveheights[selectSong].slice(0);
             amplify=false;
             debug(move);
         }
@@ -166,7 +164,7 @@ function OnMouseUp(e){
 }
 selectSong=0;
 selectStart=0;
-selectStop=800;
+selectStop=0;
 function OnMouseMove(e){
     if (e==null)
         var e = window.event;
@@ -181,7 +179,12 @@ function OnMouseMove(e){
     dx = endx-startx;
 
     if(amplify == true){
-        drawSelect(selectSong,selectStart,selectStop, currentY-dragStartY, heights);
+        moveheights[selectSong]=heights[selectSong].slice(0);
+        for(x=selectStart;x<selectStop;x+=1){
+            moveheights[selectSong][x] = heights[selectSong][x] + currentY - dragStartY;
+        }
+        drawSelect(selectSong,selectStart,selectStop, moveheights);
+        drawContext(moveheights)
     }
     if(move==true){
         moveheights[selectSong]=heights[selectSong].slice(0);
@@ -198,7 +201,7 @@ function OnMouseMove(e){
                 debug(dragStartX-currentX)
             }
 
-            drawSelect(selectSong,currentX,800, 0, moveheights);
+            drawSelect(selectSong,currentX,800, moveheights);
         }
         if (dx > 0){
             for(x=0;x<=currentX;x+=1){
@@ -210,13 +213,13 @@ function OnMouseMove(e){
                     moveheights[selectSong][x]= Math.max(heights[selectSong][x-currentX+dragStartX]);
                 }
             }
-            drawSelect(selectSong,0,currentX, 0, moveheights);
+            drawSelect(selectSong,0,currentX, moveheights);
         }
         drawContext(moveheights);
     }
 
     if(move==false && amplify==false){ //selection
-        drawSelect(selectSong,startx,endx,0,heights);
+        drawSelect(selectSong,startx,endx,heights);
     }
 }
 function ready(){
