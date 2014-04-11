@@ -1,21 +1,19 @@
 function menu(item){
     if(item=='search'){
         menuSearch();
+        return;
     }
-    else{
-        if(item=='amplify'){
-            menuAmplify();
-        }
-        else{
-            if(item=='move'){
-                menuMove();
-                debug(move);
-            }
-            else{
-                alert("unimplemented feature: "+item);
-            }
-        }
+    if(item=='amplify'){
+        menuAmplify();
+        return;
     }
+    if(item=='move'){
+        menuMove();
+        debug(move);
+        return;
+    }
+
+    alert("unimplemented feature: "+item);
 }
 
 function menuMove(){
@@ -77,14 +75,34 @@ function OnMouseDown(e){
         return false;
     }
 }
-function OnMouseUp(e){
+function drawContext(){
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
-
+    context.clearRect(0,0,800,600);
+    for(x=0;x<=800;x+=1){
+        context.strokeStyle='#000000'
+        context.beginPath();
+        context.moveTo(x,0);
+        context.lineTo(x,heights[x]);
+        context.closePath();
+        context.stroke();
+    }
+}
+function drawSelect(left,right,dy,h){
     var selectcanvas = document.getElementById('selectcanvas');
     var selectcontext = selectcanvas.getContext('2d');
+    selectcontext.clearRect(0,0,800,600);
+    for(var x=left; x<=right; x+=1){
+        selectcontext.strokeStyle='#0000FF';
+        selectcontext.beginPath();
+        selectcontext.moveTo(x,0);
+        selectcontext.lineTo(x,h[x]+dy);
+        selectcontext.closePath();
+        selectcontext.stroke();
+    }
 
-
+}
+function OnMouseUp(e){
     if(dragtarget!= null){
         debug(move);
         document.onmousemove=null;
@@ -99,47 +117,25 @@ function OnMouseUp(e){
         selectStop = Math.max(dragStartX,dragStopX);
         }
         if(amplify == true){
-            selectcontext.clearRect(0,0,800,600);
 
             for(x=selectStart;x<=selectStop;x+=1){
                 heights[x]= heights[x]+dragStopY-dragStartY;
-                selectcontext.strokeStyle='#0000FF';
-                selectcontext.beginPath();
-                selectcontext.moveTo(x,0);
-                selectcontext.lineTo(x,heights[x]);
-                selectcontext.closePath();
-                selectcontext.stroke();
             }
+            drawSelect(selectStart,selectStop, 0, heights);
+            alert("amplified");
             moveheights=heights.slice(0);
-            for(x=0;x<=800;x+=1){
-                context.strokeStyle='#000000'
-                context.beginPath();
-                context.moveTo(x,0);
-                context.lineTo(x,heights[x]);
-                context.closePath();
-                context.stroke();
-            }
-        amplify=false;
-        debug(move);
+            amplify=false;
+            debug(move);
         }
         if(move==true){
-            context.clearRect(0,0,800,600);
             dx=dragStopX-dragStartX;
             adx=Math.abs(dx);
+            drawContext();
+            alert()
             heights=moveheights.slice(0);
             move=false;
         }
-            context.clearRect(0,0,800,600);
-            for(x=0;x<=800;x+=1){
-
-                context.strokeStyle='#000000'
-                context.beginPath();
-                context.moveTo(x,0);
-                context.lineTo(x,heights[x]);
-                context.closePath();
-                context.stroke();
-            }
-
+        drawContext();
     }
 }
 selectStart=0;
@@ -156,74 +152,35 @@ function OnMouseMove(e){
     endy = Math.max(currentY, dragStartY);
     dy = endy-starty;
     dx = endx-startx;
-    var canvas = document.getElementById('selectcanvas');
-    var context = canvas.getContext('2d');
 
     if(amplify == true){
-        context.clearRect(0,0,800,600);
-        for(x=selectStart;x<=selectStop;x+=1){
-            context.strokeStyle='#0000FF';
-            context.beginPath();
-            context.moveTo(x,0);
-            context.lineTo(x,heights[x]+currentY-dragStartY);
-            context.closePath();
-            context.stroke();
-        }
+        drawSelect(selectStart,selectStop, currentY-dragStartY, heights);
     }
     if(move==true){
-        context.clearRect(0,0,800,600);
-            dx=currentX-dragStartX;
-            adx=Math.abs(dx);
-            if (dx< 0){
-                for(x=800;x>=currentX;x-=1){
-                    moveheights[x]= heights[x-currentX+dragStartX];
-                    context.strokeStyle='#0000FF';
-                    context.beginPath();
-                    context.moveTo(x,0);
-                    context.lineTo(x,moveheights[x]);
-                    context.closePath();
-                    context.stroke();
-                }
-
+        moveheights=heights.slice(0);
+        dx=currentX-dragStartX;
+        adx=Math.abs(dx);
+        if (dx< 0){
+            for(x=800;x>=currentX;x-=1){
+                moveheights[x]= heights[x-currentX+dragStartX];
             }
-            if (dx > 0){
-                for(x=0;x<=currentX;x+=1){
-                    moveheights[x]= heights[x-currentX+dragStartX];
-                    context.strokeStyle='#0000FF';
-                    context.beginPath();
-                    context.moveTo(x,0);
-                    context.lineTo(x,moveheights[x]);
-                    context.closePath();
-                    context.stroke();
-                }
-
+            drawSelect(currentX,800, 0, moveheights);
+        }
+        if (dx > 0){
+            for(x=0;x<=currentX;x+=1){
+                moveheights[x]= heights[x-currentX+dragStartX];
             }
+            drawSelect(0,currentX, 0, moveheights);
+        }
     }
 
     if(move==false && amplify==false){ //selection
-        context.clearRect(0,0,800,600);
-        for(x=startx;x<=endx;x+=1){
-            context.strokeStyle='#0000FF';
-            context.beginPath();
-            context.moveTo(x,0);
-            context.lineTo(x,heights[x]);
-            context.closePath();
-            context.stroke();
-        }
+        drawSelect(startx,endx,0,heights);
     }
 }
 function ready(){
     document.onmousedown=OnMouseDown;
     document.onmouseup=OnMouseUp;
     getJson();
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-    context.strokeStyle='#000';
-    for(x=0; x<800; x+=1){
-        context.beginPath();
-        context.moveTo(x,0);
-        context.lineTo(x,heights[x]);
-        context.closePath();
-        context.stroke();
-    }
+    drawContext();
 }
