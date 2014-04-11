@@ -13,6 +13,7 @@ class TestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         """Handle a post request by returning the square of the number."""
         length = int(self.headers.getheader('content-length'))
         data_string = self.rfile.read(length)
+
         try:
             subprocess.call(['./youtube2png.py', data_string])
             result = data_string

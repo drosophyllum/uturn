@@ -67,6 +67,26 @@ function xml_http_post(url, data, callback) {
 
 
 function test_handle(req) {
+    var contents = document.getElementById("searchitem").value;
+    if(req.responseText == '1'){
+        stage='2'
+        xml_http_post("index.html", stage+contents, test_handle)
+        document.getElementById("searchbox").value = 'downloading song...';
+        return
+    }
+    if(req.responseText == '2'){
+        stage='3'
+        xml_http_post("index.html", stage+contents, test_handle)
+        document.getElementById("searchbox").value = 'converting song...';
+        return
+    }
+    if(req.responseText == '3'){
+        stage='4'
+        xml_http_post("index.html", stage+contents, test_handle)
+        document.getElementById("searchbox").value = 'retreiving waveform...';
+        return
+    }
+
     debug(req.responseText);
     num=heights.length
     durations[num]=getDuration(req.responseText);
@@ -95,9 +115,11 @@ function getDuration(id){
 function searched(e){
     if(e.which==13||e.keyCode==13){
         var contents = document.getElementById("searchbox").value;
-        xml_http_post("index.html", contents, test_handle)
+        document.getElementById("searchitem").value = contents;
+        stage='1'
+        xml_http_post("index.html", stage+contents, test_handle)
     }
-    document.getElementById("searchbox").value = 'getting song...';
+    document.getElementById("searchbox").value = 'downloading song...';
 
 }
 function getJson(id){
