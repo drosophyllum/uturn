@@ -26,6 +26,7 @@ debug('Video id: %s'%videoid)
 
 required_paths = ['video',
                   'song',
+                  'duration',
                   'wav',
                   'thumb',
                   'description',
@@ -60,6 +61,9 @@ if not os.path.isfile('video/%s.mp4'%videoid):
          ]
     try:
         subprocess.call(args)
+    except Exception as e:
+        error('youtube-dl failed!', e)
+    try:
         os.rename('%s.mp4'%videoid, 'video/%s.mp4'%videoid)
         os.rename('%s.jpg'%videoid, 'thumb/%s.jpg'%videoid)
         os.rename('%s.mp4.description'%videoid, 'description/%s.txt'%videoid)
@@ -108,15 +112,26 @@ if not os.path.isfile('peaks/%s.txt'%videoid):
     except Exception as e:
         error('writing peaks file failed!', e)
 
-else:
-    with open('peaks/%s.txt'%videoid,'r') as peakfile:
-        contents = peakfile.read()
-    peaks = eval(contents)
-    numpeaks = len(peaks)
-    debug("%s peaks"%str(len(peaks)))
-    with open('info/%s.json'%videoid,'r') as jsonfile:
-        data = json.load(jsonfile)
-    duration = data['duration']
-    debug('%s seconds'%duration)
-    peakspersecond = 1.0*numpeaks/duration
-    debug('%s peaks per second'%peakspersecond)
+
+with open('peaks/%s.txt'%videoid,'r') as peakfile:
+    contents = peakfile.read()
+peaks = eval(contents)
+numpeaks = len(peaks)
+debug("%s peaks"%str(len(peaks)))
+with open('info/%s.json'%videoid,'r') as jsonfile:
+    data = json.load(jsonfile)
+duration = data['duration']
+
+if not os.path.isfile('duration/%s.txt'%videoid):
+    try:
+        with open('duration/%s.txt'%videoid,'w') as durationfile:
+            durationfile.write(str(duration))
+    except Exception as e:
+        error('writing duration file failed!', e)
+
+
+
+debug('%s seconds'%duration)
+peakspersecond = 1.0*numpeaks/duration
+debug('%s peaks per second'%peakspersecond)
+
