@@ -45,11 +45,11 @@ function getJson(id){
 
     if (oRequest.status==200) {
         peaks=oRequest.responseText;
-        heights[0]=eval(peaks);
-        for(x=0;x<heights[0].length-2;x+=3){
-            heights[0][x/3]=(heights[0][x]+heights[0][x+1]+heights[0][x+2])/3*200
+        peaks=eval(peaks);
+        for(x=0;x<peaks.length-2;x+=3){
+            h[x/3]=(peaks[x]+peaks[x+1]+peaks[x+2])/3*200
         }
-        moveheights[0]=heights[0].slice(0);
+        return h;
     }
     else {
         alert("Error executing XMLHttpRequest call!");
@@ -186,6 +186,6 @@ function OnMouseMove(e){
 function ready(){
     document.onmousedown=OnMouseDown;
     document.onmouseup=OnMouseUp;
-    getJson('DUT5rEU6pqM');
+    heights[0]=getJson('DUT5rEU6pqM');
     drawContext();
 }
