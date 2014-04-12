@@ -100,23 +100,15 @@ def waveform(videoid):
 
 def findpeaks(videoid):
     if not os.path.isfile('peaks/%s.txt'%videoid):
-        print "running julia"
-        args=['julia',
-              'wave.jl',
-             'png/%s.png'%videoid
+        print "running wave.py"
+        args=['python',
+              'wave.py',
+              videoid
              ]
-        juliaout = subprocess.check_output(args)
-        #except Exception as e:
-         #   error('wave.jl failed!', e)
         try:
-            with open('peaks/%s.txt'%videoid,'w') as peakfile:
-                peakfile.write(juliaout)
+           juliaout = subprocess.check_output(args)
         except Exception as e:
-            error('writing peaks file failed!', e)
-
-
-
-
+            error('wave.jl failed!', e)
 
 class TestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     """The test example handler."""
