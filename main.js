@@ -103,7 +103,7 @@ function test_handle(req) {
 
 function getDuration(id){
     var oRequest =new XMLHttpRequest();
-    var sURL = '../youtube2png/duration/'+id+'.txt';
+    var sURL = '../duration/'+id+'.txt';
     oRequest.open("GET",sURL,false);
     oRequest.send(null)
     if (oRequest.status==200) {
@@ -124,7 +124,7 @@ function searched(e){
 }
 function getJson(id){
     var oRequest =new XMLHttpRequest();
-    var sURL = '../youtube2png/peaks/'+id+'.txt';
+    var sURL = '../peaks/'+id+'.txt';
     var numSongs = heights.length;
     var duration = durations[numSongs]
     oRequest.open("GET",sURL,false);

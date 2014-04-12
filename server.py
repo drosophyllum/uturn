@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 import simplejson as json
 import subprocess
@@ -46,14 +46,18 @@ def download(videoid):
             subprocess.call(args)
         except Exception as e:
             error('youtube-dl failed!', e)
-        try:
+        if True:
+#        try:
+            print videoid
+            print os.path.exists('%s.mp4'%videoid)
+            print os.path.exists('video')
             os.rename('%s.mp4'%videoid, 'video/%s.mp4'%videoid)
             os.rename('%s.jpg'%videoid, 'thumb/%s.jpg'%videoid)
             os.rename('%s.mp4.description'%videoid, 'description/%s.txt'%videoid)
             os.rename('%s.info.json'%videoid, 'info/%s.json'%videoid)
             os.rename('%s.m4a'%videoid, 'song/%s.m4a'%videoid)
-        except Exception as e:
-            error('youtube-dl failed!', e)
+#        except Exception as e:
+#            error('youtube-dl rename failed!', e)
 
 
 def convert(videoid):
@@ -101,10 +105,9 @@ def findpeaks(videoid):
               'wave.jl',
              'png/%s.png'%videoid
              ]
-        try:
-            juliaout = subprocess.check_output(args)
-        except Exception as e:
-            error('wave.jl failed!', e)
+        juliaout = subprocess.check_output(args)
+        #except Exception as e:
+         #   error('wave.jl failed!', e)
         try:
             with open('peaks/%s.txt'%videoid,'w') as peakfile:
                 peakfile.write(juliaout)
@@ -125,7 +128,6 @@ class TestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         stage = int(datastring[0])
         videoid = datastring[1:]
 
-        os.chdir('youtube2png')
         if stage==1:
             download(videoid)
             result = '1'
@@ -138,7 +140,6 @@ class TestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         if stage==4:
             findpeaks(videoid)
             result = videoid
-        os.chdir('../')
         self.wfile.write(result)
 
 def start_server():
