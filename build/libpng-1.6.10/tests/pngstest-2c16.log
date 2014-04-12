@@ -1,3 +1,0 @@
-PASS: --strict ./contrib/pngsuite/basn2c16.png
-PASS: --strict ./contrib/pngsuite/ftbbn2c16.png
-PASS: --strict ./contrib/pngsuite/ftbgn2c16.png
